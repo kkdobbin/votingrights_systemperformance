@@ -16,17 +16,17 @@ Effect_WQ$Key <- "Water quality risk"
 Effect_Accessibility$Key <- "Accessibility risk"
 Effect_Affordability$Key <- "Affordability risk"
 Effect_TMF$Key <- "TMF capacity risk"
-Probabilities <- bind_rows(Effect_Accessibility, Effect_Affordability, Effect_TMF, Effect_WQ)
+Probabilities <- bind_rows(Effect_WQ, Effect_Affordability, Effect_TMF)
 
 #make figure faceting with key
 plotCombined <- Probabilities %>%
-  ggplot(aes(x = enfranchisement_final, y = estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high, color = enfranchisement_final), width = 0.2, show.legend = FALSE) +
+  ggplot(aes(x = enfranchisement_final, y = estimate*100)) +
+  geom_errorbar(aes(ymin = conf.low*100, ymax = conf.high*100, color = enfranchisement_final), width = 0.2, show.legend = FALSE) +
   geom_point(aes(color = enfranchisement_final), show.legend = FALSE) +
   xlab(" ") +
   ylab(" ") +
   scale_color_brewer(palette = "Dark2") +
-  facet_wrap(~Key, scales = "free", nrow = 2, ncol = 2) +
+  facet_wrap(~Key, scales = "free", nrow = 1, ncol = 3) +
   cowplot::theme_half_open(); plotCombined
 
 ggsave("Fig2_tmp.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
@@ -131,13 +131,13 @@ plotCombined_TMF <- Probabilities_TMF %>%
 library(RColorBrewer)
 
 #Probabilities_MASSIVE <- bind_rows(Effect_WQ_ecoli, Effect_WQ_CEC, Effect_WQ_MCL, Effect_WQ_TT, Effect_AF_MHI, Effect_AF_extreme, Effect_AF_covid, Effect_AF_funding, Effect_AC_sources, Effect_AC_interties, Effect_AC_bottled, Effect_AC_sourcecapacity, Effect_TMF_opcertviolations, Effect_TMF_mrviolations, Effect_TMF_cash, Effect_TMF_operating)
-Probabilities_MASSIVE <- bind_rows(Probabilities_WQ, Probabilities_AF, Probabilities_AC, Probabilities_TMF)
+Probabilities_MASSIVE <- bind_rows(Probabilities_WQ, Probabilities_AF, Probabilities_TMF)
 Probabilities_MASSIVE$Key <- as.factor(Probabilities_MASSIVE$Key)
-Probabilities_MASSIVE$Key <- factor(Probabilities_MASSIVE$Key, levels=c("E. coli", "MCL exceedences", "Treatment Technique violations", "Bill ≥ 150% of statewide average", "Bill ≥ 1.5% of MHI", "Did not apply for arrearage relief", "Single source", "Lack of interties", "Bottled water", "Operator certification violations", "M&R violations", "<30 days cash on hand"))
+Probabilities_MASSIVE$Key <- factor(Probabilities_MASSIVE$Key, levels=c("E. coli", "MCL exceedences", "Treatment Technique violations", "Bill ≥ 150% of statewide average", "Bill ≥ 1.5% of MHI", "Did not apply for arrearage relief", "Operator certification violations", "M&R violations", "<30 days cash on hand"))
 
 plotCombined_MASSIVE <- Probabilities_MASSIVE %>%
-  ggplot(aes(x = enfranchisement_final, y = estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high, color = enfranchisement_final), width = 0.2, show.legend = FALSE) +
+  ggplot(aes(x = enfranchisement_final, y = estimate*100)) +
+  geom_errorbar(aes(ymin = conf.low*100, ymax = conf.high*100, color = enfranchisement_final), width = 0.2, show.legend = FALSE) +
   geom_point(aes(color = enfranchisement_final), show.legend = FALSE) +
   xlab(" ") +
   ylab(" ") +

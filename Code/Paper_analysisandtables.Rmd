@@ -10,7 +10,7 @@ knit: (function(rmdfile, ...) { rmarkdown::render(rmdfile, output_dir=here::here
 
 ```{r setup, include=FALSE, echo=FALSE}
 #MARKDOWN SETTINGS
-knitr::opts_knit$set(root.dir = "/Users/KristinDobbin/Box Sync/Projects/R_Projects/Votingrights_systemperformance", warning=FALSE, message=FALSE, include=FALSE)
+#knitr::opts_knit$set(root.dir = "/Users/KristinDobbin/Documents/Projects/R_Projects/Votingrights_systemperformance", warning=FALSE, message=FALSE, include=FALSE)
 
 #LOAD LIBRARIES
 library(tidyverse)
@@ -149,21 +149,20 @@ pvaluesTMF1 <- list(summary(TMF1)$coefficients[,4])
 p.values2 <- list(c(1,1,1,1,1,1))
 
 compositemodellist <- list(WQ1, WQ1OR, Affordability1, Affordability1OR,
-                           Accessibility1, Accessibility1OR, TMF1, TMF1OR)
+                          TMF1, TMF1OR)
 
 Compositestable <- capture.output(stargazer(compositemodellist,
                                  type = 'html', 
                                  column.labels = c("coefficients(se)", "Odds ratio", 
                                                    "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
                                                    "coefficients(se)", "Odds ratio"),
                                  model.numbers = FALSE, 
                                  dep.var.labels = c("Water quality", "Affordability", 
-                                                    "Accessibility", "TMF"), 
-                                 ci=c(F,T, F, T, F, T, F, T), 
+                                                    "TMF"), 
+                                 ci=c(F,T, F, T, F, T), 
                                  star.cutoffs = c(0.05, 0.01, 0.001),
                                  p = c(p.valuesWQ1, p.values2, pvaluesAffordability1, p.values2,
-                                       pvaluesAccesibility1, p.values2, pvaluesTMF1, p.values2),
+                                       pvaluesTMF1, p.values2),
                                  omit.stat = c("ll", "aic"),
                                  covariate.labels = c("Lim enfran.", "No enfran.",
                                                       "Population (log)", "Surface water",
@@ -351,4 +350,31 @@ cat(paste(gsub("\\(0.000, 0.000\\)", "", TMFtable), collapse = "\n"), "\n")
 
 <br>
 <br>
-  
+
+```{r descriptives for demofraphics, results='asis', echo=FALSE}
+Data_mini <- Data %>% select(enfranchisement_final, MHI, MHI_KD, LN_POP, Source, Percent.renter, Percent.white, POPULATION, CALENVIRO_SCREEN_SCORE, FAILING, WQ_combined_any, Affordability_combined_any, TMF_combined_any, Accessibility_combined_any, Percent.hispanicorlatino, Percent.black, Percent.asian) 
+
+Descriptives<- Data_mini %>%
+  group_by(enfranchisement_final) %>% 
+  summarize(meanLNPOP = mean(na.omit(POPULATION)),
+            meanMHI = mean(na.omit(MHI)),
+            meanPercRent = mean(na.omit(Percent.renter)),
+            meanPercWhite = mean(na.omit(Percent.white)),
+            meanCES = mean(na.omit(CALENVIRO_SCREEN_SCORE)),
+            medianpop = median(na.omit(POPULATION)))
+
+SIdescriptives <- Data_mini %>% 
+  group_by(enfranchisement_final) %>% 
+  select_if(is.numeric) %>% 
+  gather(Variable, Value, -enfranchisement_final) %>% 
+  group_by(Variable, enfranchisement_final) %>% 
+  summarise(min = min(na.omit(Value)), 
+            median = median(na.omit(Value)),
+            mean = mean(na.omit(Value)), 
+            max = max(na.omit(Value)),
+            sd = sd(na.omit(Value))) %>% 
+ ungroup()
+
+SIdescriptives <- SIdescriptives %>% mutate_if(is.numeric, round, digits=3)
+```
+

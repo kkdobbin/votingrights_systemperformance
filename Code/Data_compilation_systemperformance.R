@@ -7,8 +7,7 @@ library(plyr)
 # Create sample and governance variables ----------------------------------------------------
 
 ###Load data and initial manipulations
-CWSgov <- read.csv(here::here("Data_raw/Dobbin_Fencl_McBride_2023_CA_CWS_institutional_type_update.csv"), header=T,
-                   na.strings=c("","NA"))
+CWSgov <- read.csv(here::here("Data_raw/Dobbin_Fencl_McBride_2023_CA_CWS_institutional_type_update.csv"), header=T, na.strings=c("","NA"))
 CWSgov$Primacy_FINAL <- as.factor(CWSgov$Primacy_FINAL)
 CWSgov <- CWSgov %>% filter(Primacy_FINAL != "EPA Region 9") #get rid of EPA regulated Tribal water systems
 CWSgov <- CWSgov %>% filter(Final_inst_update != "Tribal Government") #Get rid of three remaining systems that are Tribal but state regulated

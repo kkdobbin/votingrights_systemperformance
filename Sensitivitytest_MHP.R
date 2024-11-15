@@ -1,4 +1,4 @@
-# Models (This code should match Paper_analysisandtables.Rmd)
+# Sensitivity analysis making MHPs their own category
 
 #LOAD LIBRARIES
 library(tidyverse)
@@ -52,6 +52,14 @@ Demographics <- Demographics[,-c(1,3)]
 Demographics$PWSID <- as.factor(Demographics$PWSID)
 
 Data <- left_join(Data, Demographics, by = "PWSID")
+
+#Finally make MHP their own category
+#Make Mobile Home Parks (MHP) their own enfranchisement category
+levels(Data$enfranchisement_final) <- c(levels(Data$enfranchisement_final),"Mobile Home Park")
+
+Data <- Data %>% mutate(enfranchisement_final = case_when(Final_inst_update == "Mobile Home Park" ~ 
+                                                            "Mobile Home Park", .default = enfranchisement_final)) %>%
+  mutate(enfranchisement_final = as.factor(enfranchisement_final))
 
 #MODELS
 #Water quality
