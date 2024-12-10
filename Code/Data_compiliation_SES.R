@@ -8,7 +8,7 @@ library(tidycensus)
 library(sf)
 library(sp)
 
-Demographics_blockg <- get_acs(geography = "block group", variables = c("B03002_001E", "B03002_003E", "B03002_004E", "B03002_005E", "B03002_006E", "B03002_007E", "B03002_012E", "B19013_001E", "B25003_001E", "B25003_002E", "B25003_003E", "B11001_001E"), state = "CA", year =2020, output = "wide", survey = "acs5", geometry = TRUE)
+Demographics_blockg <- get_acs(geography = "block group", variables = c("B03002_001E", "B03002_003E", "B03002_004E", "B03002_005E", "B03002_006E", "B03002_007E", "B03002_012E", "B19013_001E", "B25003_001E", "B25003_002E", "B25003_003E", "B11001_001E"), state = "CA", year =2022, output = "wide", survey = "acs5", geometry = TRUE)
 
 #rename variables
 Demographics_blockg <- Demographics_blockg %>% dplyr::rename(Race.estimate.total = B03002_001E, Race.white.alone = B03002_003E, Race.black.alone = B03002_004E, Race.native.alone = B03002_005E, Race.asian.alone = B03002_006E, Race.PI.alone = B03002_007E, Race.hispanicorlatino = B03002_012E, Median.hh.income = B19013_001E, Tenure.estimate.total = B25003_001E, Tenure.owner = B25003_002E, Tenure.renter = B25003_003E, Households.total = B11001_001E)
@@ -17,7 +17,7 @@ Demographics_blockg <- Demographics_blockg %>% dplyr::rename(Race.estimate.total
 Demographics_blockg$Income.aggregatecount <- Demographics_blockg$Median.hh.income*Demographics_blockg$Households.total
 
 #load in boundary polygons for CWS
-PWS_boundary <- st_read("Data_raw/PWS/") #Consider updating these soon, this file is a year or two old at this point
+PWS_boundary <- st_read("Data_raw/California_Drinking_Water_System_Area_Boundaries/") #New version of SABL downloaded November 15, 2024
 str(PWS_boundary)
 #plot(st_geometry(PWS_boundary)) #takes a while but works!
 
@@ -29,8 +29,9 @@ Data_small <- read.csv(here::here("Data_processed/Systemperformancedata.csv"))
 Data_small <- Data_small[,c(2,11)]
   
 Data_geo <- left_join(PWS_boundary, Data_small, by = c("SABL_PWSID" = "PWSID"))
-summary(as.factor(Data_geo$enfranchisement_final)) #Most are in the boundary dataset
+summary(as.factor(Data_geo$enfranchisement_final)) #Most are in the boundary dataset (2344 of 2405)
 Data_geo <- Data_geo[,c(2,4,5,15,19,33:36)]
+Data_geo <- Data_geo %>% distinct(SABL_PWSID, .keep_all = TRUE) #Get rid of one duplicate boundary in the dataset
 
 #areal interpolation (https://crd230.github.io/lab3.html)
 #make data set of just boundaries to play with
@@ -71,6 +72,13 @@ summary(Data_dem$Percent.asian)
 
 Data_dem$Percent.renter<- ((Data_dem$Tenure.renter)/(Data_dem$Tenure.estimate.total))*100
 summary(Data_dem$Percent.renter)
+
+#Add in county
+SDWIS <- read_csv("Data_raw/CA_SDWIS_allcws_Nov152024.csv")
+SDWIS <- SDWIS[,c(1,6)]
+SDWIS <- SDWIS %>% rename("COUNTY" = "Principal County Served")
+SDWIS <- SDWIS %>% rename("SABL_PWSID" = "Water System No.")
+Data_geo <- left_join(Data_geo, SDWIS)
 
 #save data_geo to make map later
 write.csv(Data_geo, file = here::here("Data_processed/Data_geo.csv"))

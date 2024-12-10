@@ -82,20 +82,6 @@ summary(TT)
 MCL <- glm(PERCENTAGE_OF_SOURCES_EXCEEDING_AN_MCL_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
 summary(MCL)
 
-#Accessibility
-Accessibility1 <- glm(Accessibility_combined_any ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Accessibility1)
-
-##Accessibility sub components
-sources <- glm(NUMBER_OF_WATER_SOURCES_RISK_LEVEL_BI ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(sources)
-
-Interties <- glm(ABESENCE_OF_INTERTIES_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Interties)
-
-Bottled <- glm(BOTTLED_WATER_OR_HAULED_WATER_RELIANCE_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Bottled)
-
 #Affordability 
 Affordability1 <- glm(Affordability_combined_any ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
 summary(Affordability1)
@@ -138,10 +124,6 @@ Affordability1OR <- Affordability1
 Affordability1OR$coefficients <- exp(Affordability1OR$coefficients)
 pvaluesAffordability1 <- list(summary(Affordability1)$coefficients[,4])
 
-Accessibility1OR <- Accessibility1
-Accessibility1OR$coefficients <- exp(Accessibility1OR$coefficients)
-pvaluesAccesibility1 <- list(summary(Accessibility1)$coefficients[,4])
-
 TMF1OR <- TMF1
 TMF1OR$coefficients <- exp(TMF1OR$coefficients)
 pvaluesTMF1 <- list(summary(TMF1)$coefficients[,4])
@@ -171,6 +153,7 @@ Compositestable <- capture.output(stargazer(compositemodellist,
                                 apply.ci = function(x) { 0 }))
 
 cat(paste(gsub("\\(0.000, 0.000\\)", "", Compositestable), collapse = "\n"), "\n")
+
 ```
 
   
@@ -267,50 +250,6 @@ cat(paste(gsub("\\(0.000, 0.000\\)", "", AFtable), collapse = "\n"), "\n")
 <br>
   
 
-```{r table accessibility, results='asis', echo=FALSE}
-#accessibility indicators
-sourcesOR <- sources
-sourcesOR$coefficients <- exp(sourcesOR$coefficients)
-pvaluessources <- list(summary(sources)$coefficients[,4])
-
-IntertiesOR <- Interties
-IntertiesOR$coefficients <- exp(IntertiesOR$coefficients)
-pvaluesInterties <- list(summary(Interties)$coefficients[,4])
-
-BottledOR <- Bottled
-BottledOR$coefficients <- exp(BottledOR$coefficients)
-pvaluesBottled <- list(summary(Bottled)$coefficients[,4])
-
-
-ACmodellist <- list(sources, sourcesOR, Interties, IntertiesOR, Bottled, BottledOR)
-
-ACtable <- capture.output(stargazer(ACmodellist,
-                                 type = 'html', 
-                                 column.labels = c("coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio"),
-                                 model.numbers = FALSE, 
-                                 dep.var.labels = c("single source", "Absence of interties", "Bottled water reliance"), 
-                                 ci=c(F,T, F, T, F, T, F, T), 
-                                 star.cutoffs = c(0.05, 0.01, 0.001),
-                                 p = c(pvaluessources, p.values2, pvaluesInterties, p.values2, pvaluesBottled, p.values2),
-                                 omit.stat = c("ll", "aic"),
-                                 covariate.labels = c("Lim enfran.", "No enfran.",
-                                                      "Population (log)", "Surface water",
-                                                      "Purchased"),
-                                 omit = "Constant",
-                                 apply.ci = function(x) { 0 }))
-
-cat(paste(gsub("\\(0.000, 0.000\\)", "", ACtable), collapse = "\n"), "\n")
-
-```
-
-
-<br>
-<br>
-  
-
 ```{r table TMF, results='asis', echo=FALSE}
 #TMF indicators
 Opcert_violationsOR <- Opcert_violations
@@ -352,11 +291,12 @@ cat(paste(gsub("\\(0.000, 0.000\\)", "", TMFtable), collapse = "\n"), "\n")
 <br>
 
 ```{r descriptives for demofraphics, results='asis', echo=FALSE}
-Data_mini <- Data %>% select(enfranchisement_final, MHI, MHI_KD, LN_POP, Source, Percent.renter, Percent.white, POPULATION, CALENVIRO_SCREEN_SCORE, FAILING, WQ_combined_any, Affordability_combined_any, TMF_combined_any, Accessibility_combined_any, Percent.hispanicorlatino, Percent.black, Percent.asian) 
+Data_mini <- Data %>% select(enfranchisement_final, MHI_KD, MHI, LN_POP, Source, Percent.renter, Percent.white, POPULATION, CALENVIRO_SCREEN_SCORE, FAILING, WQ_combined_any, Affordability_combined_any, TMF_combined_any, Accessibility_combined_any, Percent.hispanicorlatino, Percent.black, Percent.asian) 
 
 Descriptives<- Data_mini %>%
   group_by(enfranchisement_final) %>% 
-  summarize(meanLNPOP = mean(na.omit(POPULATION)),
+  summarize(meanPOP = mean(na.omit(POPULATION)),
+            meanMHI_KD = mean(na.omit(MHI_KD)),
             meanMHI = mean(na.omit(MHI)),
             meanPercRent = mean(na.omit(Percent.renter)),
             meanPercWhite = mean(na.omit(Percent.white)),
@@ -376,5 +316,18 @@ SIdescriptives <- Data_mini %>%
  ungroup()
 
 SIdescriptives <- SIdescriptives %>% mutate_if(is.numeric, round, digits=3)
+```
+
+```{r dem sig tests, results='asis', echo=FALSE}
+#ANOVA and Tukey HSD
+MHI <- aov(MHI_KD ~ enfranchisement_final, data = Data)
+summary(MHI)
+TukeyMHI <- TukeyHSD(MHI)
+TukeyMHI_table <- as.data.frame(TukeyMHI$enfranchisement_final)
+
+AA <- aov(Percent.black ~ enfranchisement_final, data = Data)
+summary(AA)
+TukeyAA <- TukeyHSD(AA)
+TukeyAA_table <- as.data.frame(TukeyAA$enfranchisement_final)
 ```
 

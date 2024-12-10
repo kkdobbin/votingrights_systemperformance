@@ -54,7 +54,6 @@ Demographics$PWSID <- as.factor(Demographics$PWSID)
 Data <- left_join(Data, Demographics, by = "PWSID")
 
 #MODELS
-#Water quality
 Failing <- glm(FAILING ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
 summary(Failing)
 
@@ -71,20 +70,6 @@ summary(TT)
 
 MCL <- glm(PERCENTAGE_OF_SOURCES_EXCEEDING_AN_MCL_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
 summary(MCL)
-
-#Accessibility
-Accessibility1 <- glm(Accessibility_combined_any ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Accessibility1)
-
-##Accessibility sub components
-sources <- glm(NUMBER_OF_WATER_SOURCES_RISK_LEVEL_BI ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(sources)
-
-Interties <- glm(ABESENCE_OF_INTERTIES_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Interties)
-
-Bottled <- glm(BOTTLED_WATER_OR_HAULED_WATER_RELIANCE_RISK_LEVEL ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
-summary(Bottled)
 
 #Affordability 
 Affordability1 <- glm(Affordability_combined_any ~ enfranchisement_final + LN_POP + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)

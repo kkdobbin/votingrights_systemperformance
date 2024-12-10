@@ -4,8 +4,6 @@ library(marginaleffects)
 #pull out probabilities in confidence intervals
 Effect_WQ <- predictions(WQ1,
                          newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
-Effect_Accessibility <- predictions(Accessibility1,
-                                    newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
 Effect_Affordability <- predictions(Affordability1,
                                     newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
 Effect_TMF <- predictions(TMF1,
@@ -13,10 +11,11 @@ Effect_TMF <- predictions(TMF1,
 
 #add key and combine data sets
 Effect_WQ$Key <- "Water quality risk"
-Effect_Accessibility$Key <- "Accessibility risk"
 Effect_Affordability$Key <- "Affordability risk"
 Effect_TMF$Key <- "TMF capacity risk"
-Probabilities <- bind_rows(Effect_WQ, Effect_Affordability, Effect_TMF)
+Probabilities <- bind_rows(Effect_WQ, Effect_TMF, Effect_Affordability)
+Probabilities$Key <- factor(Probabilities$Key, levels = c("Water quality risk", "TMF capacity risk", "Affordability risk"))
+
 
 #make figure faceting with key
 plotCombined <- Probabilities %>%
@@ -29,7 +28,7 @@ plotCombined <- Probabilities %>%
   facet_wrap(~Key, scales = "free", nrow = 1, ncol = 3) +
   cowplot::theme_half_open(); plotCombined
 
-ggsave("Fig2_tmp.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
+ggsave("Fig2.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
 
 #water quality subindicators figure
 Effect_WQ_ecoli <- predictions(ecoli,
@@ -80,30 +79,6 @@ plotCombined_AF <- Probabilities_AF %>%
   facet_wrap(~Key, scale = "free", nrow = 2, ncol = 2) +
   cowplot::theme_half_open(); plotCombined_AF
 
-#accessibility sub indicators figure
-Effect_AC_sources <- predictions(sources,
-                                 newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
-Effect_AC_interties <- predictions(Interties,
-                                   newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
-Effect_AC_bottled <- predictions(Bottled,
-                                 newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
-
-Effect_AC_sources$Key <- "Single source"
-Effect_AC_interties$Key <- "Lack of interties"
-Effect_AC_bottled$Key <- "Bottled water"
-Probabilities_AC <- bind_rows(Effect_AC_sources, Effect_AC_interties, Effect_AC_bottled)
-Probabilities_AC$Category <- "Accessibility"
-
-plotCombined_AC <- Probabilities_AC %>%
-  ggplot(aes(x = enfranchisement_final, y = estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, color = "grey") +
-  geom_point() +
-  xlab(" ") +
-  ylab(" ") +
-  facet_wrap(~Key, scales = "free", nrow = 2, ncol = 2) +
-  cowplot::theme_half_open(); plotCombined_AC
-
-
 #TMF subindicators figure
 Effect_TMF_opcertviolations <- predictions(Opcert_violations,
                                            newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
@@ -145,6 +120,7 @@ plotCombined_MASSIVE <- Probabilities_MASSIVE %>%
   facet_wrap(~Category+Key, scales = "free", nrow = 4, ncol = 3) +
   cowplot::theme_half_open(); plotCombined_MASSIVE
 
+ggsave("Fig3.jpeg", plotCombined_MASSIVE, path = "Figures/", height = 6, width = 9, units = "in", dpi = 720)
 
 #Make bar graph for enfranchisement variables
 
