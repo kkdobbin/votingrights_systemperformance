@@ -135,20 +135,22 @@ compositemodellist <- list(WQ1, WQ1OR, Affordability1, Affordability1OR,
 
 Compositestable <- capture.output(stargazer(compositemodellist,
                                  type = 'html', 
-                                 column.labels = c("coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio"),
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
                                  model.numbers = FALSE, 
                                  dep.var.labels = c("Water quality", "Affordability", 
-                                                    "TMF"), 
+                                                    "TMF capacity"), 
                                  ci=c(F,T, F, T, F, T), 
                                  star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
                                  p = c(p.valuesWQ1, p.values2, pvaluesAffordability1, p.values2,
                                        pvaluesTMF1, p.values2),
                                  omit.stat = c("ll", "aic"),
-                                 covariate.labels = c("Lim enfran.", "No enfran.",
+                                 covariate.labels = c("Limited enfran.", "No enfran.",
                                                       "Population (log)", "Surface water",
-                                                      "Purchased"),
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
                                  omit = "Constant",
                                 apply.ci = function(x) { 0 }))
 
@@ -179,21 +181,22 @@ WQmodellist <- list(ecoli, ecoliOR, TT, TTOR, MCL, MCLOR)
 
 WQtable <- capture.output(stargazer(WQmodellist,
                                  type = 'html', 
-                                 column.labels = c("coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio"),
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
                                  model.numbers = FALSE, 
-                                 dep.var.labels = c("ecoli", "treatment technique violations", "MCL violations", 
-                                                    "cont. of emerging concern"), 
+                                 dep.var.labels = c("E. coli", "Treatment technique violations", "MCL violations"), 
                                  ci=c(F,T, F, T, F, T, F, T), 
                                  star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
                                  p = c(pvaluesecoli, p.values2, pvaluesTT, p.values2,
                                        pvaluesMCL, p.values2),
                                  omit.stat = c("ll", "aic"),
-                                 covariate.labels = c("Lim enfran.", "No enfran.",
+                                 covariate.labels = c("Limited enfran.", "No enfran.",
                                                       "Population (log)", "Surface water",
-                                                      "Purchased"),
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
                                  omit = "Constant",
                                  apply.ci = function(x) { 0 }))
 
@@ -225,20 +228,22 @@ AFmodellist <- list(MHI, MHIOR, extreme, extremeOR, covid, covidOR)
 
 AFtable <- capture.output(stargazer(AFmodellist,
                                  type = 'html', 
-                                 column.labels = c("coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio"),
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
                                  model.numbers = FALSE, 
-                                 dep.var.labels = c("bill ≥1.5% MHI", "bill ≥150% statewide average",
-                                                    "did not apply for arrearage relief", "no funding"), 
+                                 dep.var.labels = c("Unaffordable bill", "Extreme bill",
+                                                    "No arrearage relief"), 
                                  ci=c(F,T, F, T, F, T, F, T), 
                                  star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
                                  p = c(pvaluesMHI, p.values2, pvaluesextreme, p.values2, pvaluescovid, p.values2),
                                  omit.stat = c("ll", "aic"),
-                                 covariate.labels = c("Lim enfran.", "No enfran.",
+                                 covariate.labels = c("Limited enfran.", "No enfran.",
                                                       "Population (log)", "Surface water",
-                                                      "Purchased"),
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
                                  omit = "Constant",
                                  apply.ci = function(x) { 0 }))
 
@@ -268,19 +273,21 @@ TMFmodellist <- list(Opcert_violations, Opcert_violationsOR, mrviolations, mrvio
 
 TMFtable <- capture.output(stargazer(TMFmodellist,
                                  type = 'html', 
-                                 column.labels = c("coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio", 
-                                                   "coefficients(se)", "Odds ratio"),
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
                                  model.numbers = FALSE, 
-                                 dep.var.labels = c("operator cert violations", "M&R violations", "Cash on hand"), 
+                                 dep.var.labels = c("Operator cert. violations", "M&R violations", "Cash on hand"), 
                                  ci=c(F,T, F, T, F, T, F, T), 
                                  star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
                                  p = c(pvaluesOpcert, p.values2, pvaluesmrviolations, p.values2, pvaluescash, p.values2),
                                  omit.stat = c("ll", "aic"),
-                                 covariate.labels = c("Lim enfran.", "No enfran.",
+                                 covariate.labels = c("Limited enfran.", "No enfran.",
                                                       "Population (log)", "Surface water",
-                                                      "Purchased"),
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
                                  omit = "Constant",
                                  apply.ci = function(x) { 0 }))
 
@@ -291,12 +298,11 @@ cat(paste(gsub("\\(0.000, 0.000\\)", "", TMFtable), collapse = "\n"), "\n")
 <br>
 
 ```{r descriptives for demofraphics, results='asis', echo=FALSE}
-Data_mini <- Data %>% select(enfranchisement_final, MHI_KD, MHI, LN_POP, Source, Percent.renter, Percent.white, POPULATION, CALENVIRO_SCREEN_SCORE, FAILING, WQ_combined_any, Affordability_combined_any, TMF_combined_any, Accessibility_combined_any, Percent.hispanicorlatino, Percent.black, Percent.asian) 
+Data_mini <- Data %>% select(enfranchisement_final, MHI, LN_POP, Source, Percent.renter, Percent.white, POPULATION, CALENVIRO_SCREEN_SCORE, FAILING, WQ_combined_any, Affordability_combined_any, TMF_combined_any, Accessibility_combined_any, Percent.hispanicorlatino, Percent.black, Percent.asian) 
 
 Descriptives<- Data_mini %>%
   group_by(enfranchisement_final) %>% 
   summarize(meanPOP = mean(na.omit(POPULATION)),
-            meanMHI_KD = mean(na.omit(MHI_KD)),
             meanMHI = mean(na.omit(MHI)),
             meanPercRent = mean(na.omit(Percent.renter)),
             meanPercWhite = mean(na.omit(Percent.white)),
@@ -320,14 +326,54 @@ SIdescriptives <- SIdescriptives %>% mutate_if(is.numeric, round, digits=3)
 
 ```{r dem sig tests, results='asis', echo=FALSE}
 #ANOVA and Tukey HSD
-MHI <- aov(MHI_KD ~ enfranchisement_final, data = Data)
+MHI <- aov(MHI ~ enfranchisement_final, data = Data)
 summary(MHI)
 TukeyMHI <- TukeyHSD(MHI)
 TukeyMHI_table <- as.data.frame(TukeyMHI$enfranchisement_final)
+
+Data$Source_bi <- NA
+Data$Source_bi <- ifelse(Data$Source == "GW", 1, Data$Source_bi)
+Data$Source_bi <- ifelse(Data$Source == "SW", 0, Data$Source_bi)
+  
+GW <- aov(Data$Source_bi ~ Data$enfranchisement_final)
+summary(GW)
+TukeyGW <- TukeyHSD(GW)
+TukeyGW_table <- as.data.frame(TukeyGW$`Data$enfranchisement_final`)
+
+Pop <- aov(Data$POPULATION ~ Data$enfranchisement_final)
+summary(Pop)
+TukeyPop <- TukeyHSD(Pop)
+TukeyPop_table <- as.data.frame(TukeyPop$`Data$enfranchisement_final`)
+
+Rent <- aov(Data$Percent.renter ~ Data$enfranchisement_final)
+summary(Rent)
+TukeyRent <- TukeyHSD(Rent)
+TukeyRent_table <- as.data.frame(TukeyRent$`Data$enfranchisement_final`)
+
+CalE <- aov(Data$CALENVIRO_SCREEN_SCORE ~ Data$enfranchisement_final)
+summary(CalE)
+TukeyCalE <- TukeyHSD(CalE)
+TukeyCalE_table <- as.data.frame(TukeyCalE$`Data$enfranchisement_final`)
+
+White <- aov(Data$Percent.white ~ Data$enfranchisement_final)
+summary(White)
+TukeyWhite <- TukeyHSD(White)
+TukeyWhite_table <- as.data.frame(TukeyWhite$`Data$enfranchisement_final`)
 
 AA <- aov(Percent.black ~ enfranchisement_final, data = Data)
 summary(AA)
 TukeyAA <- TukeyHSD(AA)
 TukeyAA_table <- as.data.frame(TukeyAA$enfranchisement_final)
+
+Lat <- aov(Data$Percent.hispanicorlatino ~ Data$enfranchisement_final)
+summary(Lat)
+TukeyLat <- TukeyHSD(Lat)
+TukeyLat_table <- as.data.frame(TukeyLat$`Data$enfranchisement_final`)
+
+As <- aov(Data$Percent.asian ~ Data$enfranchisement_final)
+summary(As)
+TukeyAs <- TukeyHSD(As)
+TukeyAs_table <- as.data.frame(TukeyAs$`Data$enfranchisement_final`)
+
 ```
 

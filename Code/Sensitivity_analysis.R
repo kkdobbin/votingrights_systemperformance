@@ -142,7 +142,7 @@ plotCombined_alt <- Probabilities_alt %>%
   facet_wrap(~Key, scales = "free", nrow = 1, ncol = 3) +
   cowplot::theme_half_open(); plotCombined_alt
 
-ggsave("Fig2_alt.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
+ggsave("Fig2_alt.jpeg", plotCombined_alt, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
 
 #water quality subindicators figure
 Effect_WQ_ecoli_alt <- predictions(ecoli_alt,
@@ -178,9 +178,9 @@ Effect_AF_covid_alt <- predictions(covid_alt,
                                newdata = datagrid(enfranchisement_alt = c("Full - city", "Full - other", "Limited", "None - MHP", "None - IOU")))
 
 
-Effect_AF_MHI_alt$Key <- "Bill ≥ 1.5% of MHI"
-Effect_AF_extreme_alt$Key <- "Bill ≥ 150% of statewide average"
-Effect_AF_covid_alt$Key <- "Did not apply for arrearage relief"
+Effect_AF_MHI_alt$Key <- "Unaffordable bill"
+Effect_AF_extreme_alt$Key <- "Extreme bill"
+Effect_AF_covid_alt$Key <- "No arrearage relief"
 Probabilities_AF_alt <- bind_rows(Effect_AF_MHI_alt, Effect_AF_extreme_alt, Effect_AF_covid_alt)
 Probabilities_AF_alt$Category <- "Affordability"
 
@@ -195,7 +195,7 @@ plotCombined_AF_alt <- Probabilities_AF_alt %>%
   cowplot::theme_half_open() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)); plotCombined_AF_alt
 
-ggsave("FigSIAF_alt.jpeg", plotCombined_AF_alt, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
+ggsave("FigSIAF_alt.jpeg", plotCombined_AF_alt, path = "Figures/", height = 6, width = 9, units = "in", dpi = 720)
 
 #TMF subindicators figure
 Effect_TMF_opcertviolations_alt <- predictions(Opcert_violations_alt,

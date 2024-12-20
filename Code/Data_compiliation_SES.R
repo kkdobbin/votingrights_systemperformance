@@ -76,8 +76,8 @@ summary(Data_dem$Percent.renter)
 #Add in county
 SDWIS <- read_csv("Data_raw/CA_SDWIS_allcws_Nov152024.csv")
 SDWIS <- SDWIS[,c(1,6)]
-SDWIS <- SDWIS %>% rename("COUNTY" = "Principal County Served")
-SDWIS <- SDWIS %>% rename("SABL_PWSID" = "Water System No.")
+SDWIS <- SDWIS %>% dplyr::rename("COUNTY" = "Principal County Served")
+SDWIS <- SDWIS %>% dplyr::rename("SABL_PWSID" = "Water System No.")
 Data_geo <- left_join(Data_geo, SDWIS)
 
 #save data_geo to make map later

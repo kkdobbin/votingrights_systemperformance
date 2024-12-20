@@ -64,9 +64,9 @@ Effect_AF_covid <- predictions(covid,
                                newdata = datagrid(enfranchisement_final = c("Full", "Limited", "None")))
 
 
-Effect_AF_MHI$Key <- "Bill ≥ 1.5% of MHI"
-Effect_AF_extreme$Key <- "Bill ≥ 150% of statewide average"
-Effect_AF_covid$Key <- "Did not apply for arrearage relief"
+Effect_AF_MHI$Key <- "Unaffordable bill"
+Effect_AF_extreme$Key <- "Extreme bill"
+Effect_AF_covid$Key <- "No arrearage relief"
 Probabilities_AF <- bind_rows(Effect_AF_MHI, Effect_AF_extreme, Effect_AF_covid)
 Probabilities_AF$Category <- "Affordability"
 
@@ -108,7 +108,7 @@ library(RColorBrewer)
 #Probabilities_MASSIVE <- bind_rows(Effect_WQ_ecoli, Effect_WQ_CEC, Effect_WQ_MCL, Effect_WQ_TT, Effect_AF_MHI, Effect_AF_extreme, Effect_AF_covid, Effect_AF_funding, Effect_AC_sources, Effect_AC_interties, Effect_AC_bottled, Effect_AC_sourcecapacity, Effect_TMF_opcertviolations, Effect_TMF_mrviolations, Effect_TMF_cash, Effect_TMF_operating)
 Probabilities_MASSIVE <- bind_rows(Probabilities_WQ, Probabilities_AF, Probabilities_TMF)
 Probabilities_MASSIVE$Key <- as.factor(Probabilities_MASSIVE$Key)
-Probabilities_MASSIVE$Key <- factor(Probabilities_MASSIVE$Key, levels=c("E. coli", "MCL exceedences", "Treatment Technique violations", "Bill ≥ 150% of statewide average", "Bill ≥ 1.5% of MHI", "Did not apply for arrearage relief", "Operator certification violations", "M&R violations", "<30 days cash on hand"))
+Probabilities_MASSIVE$Key <- factor(Probabilities_MASSIVE$Key, levels=c("E. coli", "MCL exceedences", "Treatment Technique violations", "Extreme bill", "Unaffordable bill", "No arrearage relief", "Operator certification violations", "M&R violations", "<30 days cash on hand"))
 
 plotCombined_MASSIVE <- Probabilities_MASSIVE %>%
   ggplot(aes(x = enfranchisement_final, y = estimate*100)) +
