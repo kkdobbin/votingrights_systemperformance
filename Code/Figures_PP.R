@@ -30,7 +30,7 @@ plotCombined <- Probabilities %>%
   facet_wrap(~Key, scales = "free", nrow = 1, ncol = 3) +
   cowplot::theme_half_open(); plotCombined
 
-ggsave("Fig2_RR.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
+ggsave("Fig2.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
 
 #water quality subindicators figure
 Effect_WQ_ecoli <- predictions(ecoli,
@@ -122,7 +122,7 @@ plotCombined_MASSIVE <- Probabilities_MASSIVE %>%
   facet_wrap(~Category+Key, scales = "free", nrow = 4, ncol = 3) +
   cowplot::theme_half_open(); plotCombined_MASSIVE
 
-ggsave("Fig3_RR.jpeg", plotCombined_MASSIVE, path = "Figures/", height = 6, width = 9, units = "in", dpi = 720)
+ggsave("Fig3.jpeg", plotCombined_MASSIVE, path = "Figures/", height = 6, width = 9, units = "in", dpi = 720)
 
 #Make bar graph for enfranchisement variables
 
