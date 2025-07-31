@@ -8,7 +8,7 @@ library(vtable)
 library(sjPlot)
 
 #LOAD AND READY DATA
-Data <- read.csv(here::here("Data_processed/Systemperformancedata_RR.csv"))
+Data <- read.csv(here::here("Data_processed/Systemperformancedata.csv"))
 Data <- Data[,-1]
 Data$enfranchisement_final <- as.factor(Data$enfranchisement_final)
 Data$Final_inst_update <- as.factor(Data$Final_inst_update)

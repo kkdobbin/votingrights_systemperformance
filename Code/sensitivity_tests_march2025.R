@@ -4,7 +4,9 @@
 #subbing enfranchisement for public private 
 Data$public <- relevel(Data$public, ref = "Yes")
 
-#Water quality
+#Water quality\
+library(car)
+library(regclass)
 summary(WQ1)
 
 WQ1P <- glm(WQ_combined_any ~  public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
