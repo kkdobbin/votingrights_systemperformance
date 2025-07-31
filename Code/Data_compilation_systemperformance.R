@@ -1,5 +1,4 @@
-#Compile base data
-#R&R revised to follow tenants of the HR2W for analysis structure
+#Compile base data on water system performance and enfranchisement
 
 #load libraries
 library(tidyverse)

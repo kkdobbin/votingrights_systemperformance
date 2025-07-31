@@ -1,4 +1,5 @@
-#Map systems by enfranchisement type. NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Data_compillation_SES.R script
+#Map systems by enfranchisement type.
+## NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Data_compilation_SES.R script
 
 #Load libraries
 library(tidyverse)

@@ -1,5 +1,6 @@
-# Models (This code should match Paper_analysisandtables_RR.Rmd)
-#Revised for R&R
+# Models
+## Script includes creation of the "Fulldataset.csv" file which is the mater data for this project
+## This code should match Paper_analysisandtables.Rmd which is used to generate tables
 
 #LOAD LIBRARIES
 library(tidyverse)

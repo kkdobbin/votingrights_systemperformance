@@ -1,4 +1,6 @@
-#Predicted probabilities figures for GLMs. NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Models.R script
+#Predicted probabilities figures for GLMs.
+## NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Models.R script
+
 library(marginaleffects)
 
 #pull out probabilities in confidence intervals
