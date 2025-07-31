@@ -1,0 +1,301 @@
+---
+title: "sensitivity_tests_march2025_tables"
+author: "Kristin Dobbin"
+date: "2025-04-14"
+output: 
+  html_document: default
+  pdf_document: default
+knit: (function(rmdfile, ...) { rmarkdown::render(rmdfile, output_dir=here::here("Docs"))})
+---
+
+
+```{r setup, include=FALSE, echo=FALSE}
+#MARKDOWN SETTINGS
+#knitr::opts_knit$set(root.dir = "/Users/KristinDobbin/Documents/Projects/R_Projects/Votingrights_systemperformance", warning=FALSE, message=FALSE, include=FALSE)
+
+#LOAD LIBRARIES
+library(tidyverse)
+library(vtable)
+library(sjPlot)
+library(stargazer)
+
+#LOAD AND READY DATA
+Data <- read.csv(here::here("Data_processed/Systemperformancedata_RR.csv"))
+Data <- Data[,-1]
+Data$enfranchisement_final <- as.factor(Data$enfranchisement_final)
+Data$Final_inst_update <- as.factor(Data$Final_inst_update)
+
+#correct data types, levels and reference factors
+Data[,c(1:11,16, 19:45, 47:61)] <- lapply(Data[,c(1:11,16, 19:45, 47:61)], factor)
+levels(Data$WQ_combined_count) <- c(levels(Data$WQ_combined_count), "4")
+
+Data$FAILING <- ifelse(Data$FINAL_SAFER_STATUS == "Failing", "Failing", "Not failing")
+Data$FAILING <- as.factor(Data$FAILING)
+
+Data$Source <- as.factor(Data$Source)
+Data$public <- as.factor(Data$public)
+
+#re-order factor levels for enfranchisement to be full, limited, none
+Data$enfranchisement_final <- factor(Data$enfranchisement_final, levels = c("Full", "Limited", "None"))
+
+Data$FAILING <- relevel(Data$FAILING, ref = "Not failing")
+Data$enfranchisement_final <- relevel(Data$enfranchisement_final, ref = "Full")
+
+#Make self produced water the reference (compared to purchased)
+Data$Purchased <- relevel(Data$Purchased, ref = "Self-produced")
+
+Data$HISTORY_OF_E_COLI_PRESENCE_RISK_LEVEL <- relevel(Data$HISTORY_OF_E_COLI_PRESENCE_RISK_LEVEL, ref = "NONE")
+Data$TREATMENT_TECHNIUQE_VIOLATIONS_RISK_LEVEL <- relevel(Data$TREATMENT_TECHNIUQE_VIOLATIONS_RISK_LEVEL, ref = "NONE")
+Data$PERCENTAGE_OF_SOURCES_EXCEEDING_AN_MCL_RISK_LEVEL <- relevel(Data$PERCENTAGE_OF_SOURCES_EXCEEDING_AN_MCL_RISK_LEVEL, ref = "NONE")
+Data$NUMBER_OF_WATER_SOURCES_RISK_LEVEL_BI <- relevel(Data$NUMBER_OF_WATER_SOURCES_RISK_LEVEL_BI, ref = "NONE")
+Data$ABESENCE_OF_INTERTIES_RISK_LEVEL <- relevel(Data$ABESENCE_OF_INTERTIES_RISK_LEVEL, ref = "NONE")
+Data$BOTTLED_WATER_OR_HAULED_WATER_RELIANCE_RISK_LEVEL <- relevel(Data$BOTTLED_WATER_OR_HAULED_WATER_RELIANCE_RISK_LEVEL, ref = "NONE")
+Data$SOURCE_CAPACITY_VIOLATION_RISK_LEVEL <- relevel(Data$SOURCE_CAPACITY_VIOLATION_RISK_LEVEL, ref = "NONE")
+Data$PERCENT_OF_MEDIAN_HOUSEHOLD_INCOME_MHI_RISK_LEVEL_BI <- relevel(Data$PERCENT_OF_MEDIAN_HOUSEHOLD_INCOME_MHI_RISK_LEVEL_BI, ref = "2")
+Data$EXTREME_WATER_BILL_RISK_LEVEL_BI <- relevel(Data$EXTREME_WATER_BILL_RISK_LEVEL_BI, ref = "2")
+Data$FUNDING_any_failingoratriskonly <- relevel(Data$FUNDING_any_failingoratriskonly, ref = "No")
+Data$OPERATOR_CERTIFICATION_VIOLATIONS_RISK_LEVEL <- relevel(Data$OPERATOR_CERTIFICATION_VIOLATIONS_RISK_LEVEL, ref = "NONE")
+Data$MONITORING_AND_REPORTING_VIOLATIONS_RISK_LEVEL <- relevel(Data$MONITORING_AND_REPORTING_VIOLATIONS_RISK_LEVEL, ref = "NONE")
+Data$DAYS_CASH_ON_HAND_RISK_LEVEL <- relevel(Data$DAYS_CASH_ON_HAND_RISK_LEVEL, ref = "NONE")
+Data$OPERATING_RATIO_RISK_LEVEL <- relevel(Data$OPERATING_RATIO_RISK_LEVEL, ref = "NONE")
+
+#add in demographic data
+Demographics <- read.csv(here::here("Data_processed/Systemdemographicdata.csv"))
+Demographics <- Demographics[,-c(1,3)]
+Demographics$PWSID <- as.factor(Demographics$PWSID)
+
+Data <- left_join(Data, Demographics, by = "PWSID")
+
+#subbing enfranchisement for public private 
+Data$public <- relevel(Data$public, ref = "Yes")
+
+#Water quality
+
+WQ1 <- glm(WQ_combined_any ~  public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(WQ1)
+
+##WQ sub components
+
+ecoli <- glm(HISTORY_OF_E_COLI_PRESENCE_RISK_LEVEL ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(ecoli)
+
+TT <- glm(TREATMENT_TECHNIUQE_VIOLATIONS_RISK_LEVEL ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(TT)
+
+MCL <- glm(PERCENTAGE_OF_SOURCES_EXCEEDING_AN_MCL_RISK_LEVEL ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(MCL)
+
+#Affordability 
+
+Affordability1 <- glm(Affordability_combined_any ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(Affordability1)
+
+## Affordability sub components
+
+MHI <- glm(PERCENT_OF_MEDIAN_HOUSEHOLD_INCOME_MHI_RISK_LEVEL_BI ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(MHI)
+
+extreme <- glm(EXTREME_WATER_BILL_RISK_LEVEL_BI ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(extreme)
+
+covid <- glm(didnotapplycovid ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(covid)
+
+# Accessibility
+
+Accessibility1 <- glm(Accessibility_combined_any ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(Accessibility1)
+
+## Accessibility sub components
+
+Single_source <- glm(NUMBER_OF_WATER_SOURCES_RISK_LEVEL_BI ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(Single_source)
+
+Sourcecapacity_violations <- glm(SOURCE_CAPACITY_VIOLATION_RISK_LEVEL ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(Sourcecapacity_violations)
+
+Service_dis <- glm(Service_disruptions ~ public + POPULATION + Source + Purchased + MHI + Percent.renter + Percent.white, data = Data, family= binomial)
+summary(Service_dis)
+
+```
+
+This Rmd created html versions of the model results tables using stargazer. The models script must be run prior to using this Rmd
+
+```{r table composites, results='asis', echo=FALSE}
+#Composites
+WQ1OR <- WQ1
+WQ1OR$coefficients <- exp(WQ1OR$coefficients)
+p.valuesWQ1 <- list(summary(WQ1)$coefficients[,4])
+
+Affordability1OR <- Affordability1
+Affordability1OR$coefficients <- exp(Affordability1OR$coefficients)
+pvaluesAffordability1 <- list(summary(Affordability1)$coefficients[,4])
+
+Accessibility1OR <- Accessibility1
+Accessibility1OR$coefficients <- exp(Accessibility1OR$coefficients)
+pvaluesAccessibility1 <- list(summary(Accessibility1)$coefficients[,4])
+
+p.values2 <- list(c(1,1,1,1,1,1))
+
+compositemodellist <- list(WQ1, WQ1OR, Affordability1, Affordability1OR,
+                          Accessibility1, Accessibility1OR)
+
+Compositestable <- capture.output(stargazer(compositemodellist,
+                                 type = 'html', 
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
+                                 model.numbers = FALSE, 
+                                 dep.var.labels = c("Water quality", "Affordability", 
+                                                    "Accessibility"), 
+                                 ci=c(F,T, F, T, F, T), 
+                                 star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
+                                 p = c(p.valuesWQ1, p.values2, pvaluesAffordability1, p.values2,
+                                       pvaluesAccessibility1, p.values2),
+                                 omit.stat = c("ll"),
+                                 covariate.labels = c("Ownership - private",
+                                                      "Population", "Surface water",
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
+                                 omit = "Constant",
+                                apply.ci = function(x) { 0 }))
+
+cat(paste(gsub("\\(0.000, 0.000\\)", "", Compositestable), collapse = "\n"), "\n")
+
+```
+
+  
+<br>
+<br>
+  
+
+```{r table WQ, results='asis', echo=FALSE}
+#WQ indicators
+ecoliOR <- ecoli
+ecoliOR$coefficients <- exp(ecoliOR$coefficients)
+pvaluesecoli <- list(summary(ecoli)$coefficients[,4])
+
+TTOR <- TT
+TTOR$coefficients <- exp(TTOR$coefficients)
+pvaluesTT <- list(summary(TT)$coefficients[,4])
+
+MCLOR <- MCL
+MCLOR$coefficients <- exp(MCLOR$coefficients)
+pvaluesMCL <- list(summary(MCL)$coefficients[,4])
+
+WQmodellist <- list(ecoli, ecoliOR, TT, TTOR, MCL, MCLOR)
+
+WQtable <- capture.output(stargazer(WQmodellist,
+                                 type = 'html', 
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
+                                 model.numbers = FALSE, 
+                                 dep.var.labels = c("E. coli", "Treatment technique violations", "MCL violations"), 
+                                 ci=c(F,T, F, T, F, T, F, T), 
+                                 star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
+                                 p = c(pvaluesecoli, p.values2, pvaluesTT, p.values2,
+                                       pvaluesMCL, p.values2),
+                                 omit.stat = c("ll"),
+                                 covariate.labels = c("Ownership - private",
+                                                      "Population", "Surface water",
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
+                                 omit = "Constant",
+                                 apply.ci = function(x) { 0 }))
+
+cat(paste(gsub("\\(0.000, 0.000\\)", "", WQtable), collapse = "\n"), "\n")
+
+```
+
+
+  
+<br>
+<br>
+  
+
+```{r table affordability, results='asis', echo=FALSE}
+#affordability indicators
+MHIOR <- MHI
+MHIOR$coefficients <- exp(MHIOR$coefficients)
+pvaluesMHI <- list(summary(MHI)$coefficients[,4])
+
+extremeOR <- extreme
+extremeOR$coefficients <- exp(extremeOR$coefficients)
+pvaluesextreme <- list(summary(extreme)$coefficients[,4])
+
+covidOR <- covid
+covidOR$coefficients <- exp(covidOR$coefficients)
+pvaluescovid <- list(summary(covid)$coefficients[,4])
+
+AFmodellist <- list(MHI, MHIOR, extreme, extremeOR, covid, covidOR)
+
+AFtable <- capture.output(stargazer(AFmodellist,
+                                 type = 'html', 
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
+                                 model.numbers = FALSE, 
+                                 dep.var.labels = c("Unaffordable bill", "Extreme bill",
+                                                    "No arrearage relief"), 
+                                 ci=c(F,T, F, T, F, T, F, T), 
+                                 star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
+                                 p = c(pvaluesMHI, p.values2, pvaluesextreme, p.values2, pvaluescovid, p.values2),
+                                 omit.stat = c("ll"),
+                                 covariate.labels = c("Ownership - private", 
+                                                      "Population", "Surface water",
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
+                                 omit = "Constant",
+                                 apply.ci = function(x) { 0 }))
+
+cat(paste(gsub("\\(0.000, 0.000\\)", "", AFtable), collapse = "\n"), "\n")
+
+```
+
+<br>
+<br>
+  
+
+```{r table Accessibility, results='asis', echo=FALSE}
+#Accessibility indicators
+Single_sourceOR <- Single_source
+Single_sourceOR$coefficients <- exp(Single_sourceOR$coefficients)
+pvaluesSinglesource <- list(summary(Single_source)$coefficients[,4])
+
+Sourcecapacity_violationsOR <- Sourcecapacity_violations
+Sourcecapacity_violationsOR$coefficients <- exp(Sourcecapacity_violationsOR$coefficients)
+pvaluesSourcecapacity_violations <- list(summary(Sourcecapacity_violations)$coefficients[,4])
+
+Service_disOR <- Service_dis
+Service_disOR$coefficients <- exp(Service_disOR$coefficients)
+pvaluesService_dis <- list(summary(Service_dis)$coefficients[,4])
+
+Accessmodellist <- list(Single_source, Single_sourceOR, Sourcecapacity_violations, Sourcecapacity_violationsOR, Service_dis, Service_disOR)
+
+Accesstable <- capture.output(stargazer(Accessmodellist,
+                                 type = 'html', 
+                                 column.labels = c("coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR", 
+                                                   "coefficient (se)", "OR"),
+                                 model.numbers = FALSE, 
+                                 dep.var.labels = c("Single source", "Source capacity violations", "Service disruptions"), 
+                                 ci=c(F,T, F, T, F, T), 
+                                 star.cutoffs = c(0.05, 0.01, 0.001),
+                                 notes="<span>&#42;&#42;&#42;</span>: p<0.001; <span>&#42;&#42;</span>: p<0.01;<span>&#42;</span>: p<0.05",
+                                 notes.append = FALSE,
+                                 p = c(pvaluesSinglesource, p.values2, pvaluesSourcecapacity_violations, p.values2, pvaluesService_dis, p.values2),
+                                 omit.stat = c("ll"),
+                                 covariate.labels = c("Ownership - private", 
+                                                      "Population", "Surface water",
+                                                      "Purchased", "MHI", "Percent renter", "Percent non-Hispanic white"),
+                                 omit = "Constant",
+                                 apply.ci = function(x) { 0 }))
+
+cat(paste(gsub("\\(0.000, 0.000\\)", "", Accesstable), collapse = "\n"), "\n")
+```
