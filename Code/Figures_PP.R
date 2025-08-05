@@ -18,7 +18,6 @@ Effect_Access$Key <- "Accessibility risk"
 Probabilities <- bind_rows(Effect_WQ, Effect_Access, Effect_Affordability)
 Probabilities$Key <- factor(Probabilities$Key, levels = c("Water quality risk", "Accessibility risk", "Affordability risk"))
 
-
 #make figure faceting with key
 plotCombined <- Probabilities %>%
   ggplot(aes(x = enfranchisement_final, y = estimate*100)) +
@@ -29,8 +28,6 @@ plotCombined <- Probabilities %>%
   scale_color_brewer(palette = "Dark2") +
   facet_wrap(~Key, scales = "free", nrow = 1, ncol = 3) +
   cowplot::theme_half_open(); plotCombined
-
-ggsave("Fig2.jpeg", plotCombined, path = "Figures/", height = 6, width = 7.487, units = "in", dpi = 720)
 
 #water quality subindicators figure
 Effect_WQ_ecoli <- predictions(ecoli,
@@ -95,14 +92,6 @@ Effect_Access_servicedis$Key <- "Service disruptions"
 Probabilities_Access <- bind_rows(Effect_Access_singlesource, Effect_Access_sourcecapacity , Effect_Access_servicedis)
 Probabilities_Access$Category <- "Accessibility"
 
-plotCombined_Access <- Probabilities_Access %>%
-  ggplot(aes(x = enfranchisement_final, y = estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, color = "grey") +
-  geom_point() +
-  xlab(" ") +
-  ylab(" ") +
-  facet_wrap(~Key, scales = "free", nrow = 2, ncol = 2) +
-  cowplot::theme_half_open(); plotCombined_Access
 
 #Make one massive combined plot with all twelve
 library(RColorBrewer)
@@ -120,9 +109,10 @@ plotCombined_MASSIVE <- Probabilities_MASSIVE %>%
   ylab(" ") +
   scale_color_brewer(palette = "Dark2") +
   facet_wrap(~Category+Key, scales = "free", nrow = 4, ncol = 3) +
-  cowplot::theme_half_open(); plotCombined_MASSIVE
+  cowplot::theme_half_open() +
+  theme(text = element_text(family = "Helvetica")); plotCombined_MASSIVE
 
-ggsave("Fig3.jpeg", plotCombined_MASSIVE, path = "Figures/", height = 6, width = 9, units = "in", dpi = 720)
+ggsave("Fig2.eps", plotCombined_MASSIVE, path = "Figures/", height = 8, width = 11.318, units = "in", dpi = 720)
 
 #Make bar graph for enfranchisement variables
 
