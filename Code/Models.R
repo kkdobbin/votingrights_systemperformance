@@ -1,6 +1,6 @@
 # Models
-## Script includes creation of the "Fulldataset.csv" file which is the mater data for this project
-## This code should match Paper_analysisandtables.Rmd which is used to generate tables
+## Script includes creation of the "Fulldataset.csv" file which is the master data for this project
+## This code should match Paper_analysisandtables.Rmd which is used to generate pub ready tables
 
 #LOAD LIBRARIES
 library(tidyverse)
@@ -53,13 +53,6 @@ Demographics <- Demographics[,-c(1,3)]
 Demographics$PWSID <- as.factor(Demographics$PWSID)
 
 Data <- left_join(Data, Demographics, by = "PWSID")
-
-#Remove large systems since they don't have most DV variables anyways. NOT DOING THIS NOW. REMOVES MORE DATA THAN NEEDED
-#Data <- Data %>% filter(POPULATION > 24 | SERVICE_CONNECTIONS > 14) #To remove wholesalers
-#Data <- Data %>% filter(SERVICE_CONNECTIONS <3301) #To remove large systems
-#Data <- Data %>% filter(POPULATION <100000) #To get rid of another wholesaler
-#Data <- Data %>% filter(POPULATION != 0) #To get rid of more wholsalers
-#reduced overall dataset from 2405 to 1953
 
 write.csv(Data, "Data_processed/Fulldataset_RR.csv")
 

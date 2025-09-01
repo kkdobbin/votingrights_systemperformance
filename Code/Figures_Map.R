@@ -1,5 +1,5 @@
 #Map systems by enfranchisement type.
-## NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Data_compilation_SES.R script
+##NOTE THIS SCRIPT REQUIRES FIRST RUNNING THE Data_compilation_SES.R script
 
 #Load libraries
 library(tidyverse)
@@ -63,24 +63,6 @@ Demo <- ggplot() +
 
 ggsave('Figures/Fig1b.png', width = 4, height = 4, dpi = 720, bg='#ffffff')
 
-#Make a county map for a more simple smaller/county
-
-caCountiesTmp_Yolo <- caCountiesTmp %>% filter(NAME == "Yolo")
-Yolo <- Data_geo %>% filter(Data_geo$COUNTY_FIXED == "YOLO")
-
-Demo5 <- ggplot() +
-  geom_sf(data = caCountiesTmp_Yolo) +
-  geom_sf(mapping = aes(colour = enfranchisement_final, geometry = geometry), data = Yolo, 
-          inherit.aes = FALSE) +
-  theme_void() +
-  theme(legend.position = "bottom", 
-        legend.margin=margin(0,0,0,0),
-        legend.box.margin=margin(10,10,10,10)) +
-  labs(color = "Enfranchisement type") +
-  scale_color_brewer(palette = "Dark2") +
-  theme(panel.background=element_blank()); Demo5
-
-ggsave('Figures/Demo_map4.png', width = 6, height = 3, dpi = 300, bg='#ffffff')
 
 #I think Mendocino is best, Combine into panel figure
-Combined <- grid.arrange(Enfranchisement_Type, Demo4, nrow=1)
+Combined <- grid.arrange(Enfranchisement_Type, Demo, nrow=1)

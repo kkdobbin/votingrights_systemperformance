@@ -7,7 +7,7 @@ library(plyr)
 # Create sample and governance variables ----------------------------------------------------
 
 ###Load data and initial manipulations
-CWSgov <- read.csv(here::here("Data_raw/Dobbin_Fencl_McBride_2023_CA_CWS_institutional_type_update.csv"), header=T, na.strings=c("","NA"))
+CWSgov <- read.csv(here::here("Data_raw/Dobbin_Fencl_McBride_2023_CA_CWS_institutional_type_update.csv"), header=T, na.strings=c("","NA")) #Dobbin, Fencl and McBride 2023 California water system institutional update dataset from Dryad
 CWSgov$Primacy_FINAL <- as.factor(CWSgov$Primacy_FINAL)
 CWSgov <- CWSgov %>% filter(Primacy_FINAL != "EPA Region 9") #get rid of EPA regulated Tribal water systems
 CWSgov <- CWSgov %>% filter(Final_inst_update != "Tribal Government") #Get rid of three remaining systems that are Tribal but state regulated
@@ -18,7 +18,7 @@ CWSgov$Inst_Subtype  <- as.factor(CWSgov$Inst_Subtype)
 
 ### create new variables for ancillary/non ancillary, public/private and residential enfranchisement
 
-## To focus on residential systems where residents are served and could have a role in governance/decision-making, identify which systems are "residential" this is mostly synonymous to non-ancillary except with this variable maintaining Mobile Home Parks which are generally considered to be ancillary and yet in other ways these systems are more similar to non-ancillary systems in that they serve a stable residential base. Moreover, California has seen significant organizing among Mobile Home Park communities in recent years around drinking water issues. 
+## To focus on residential systems where residents are served and could have a role in governance/decision-making, identify which systems are "residential" this is mostly synonymous to non-ancillary except with this variable maintaining Mobile Home Parks which are generally considered to be ancillary and yet in other ways these systems are more similar to non-ancillary systems in that they serve a stable residential base. Moreover, California has seen significant organizing among Mobile Home Park communities in recent years around drinking water issues and they are one of the most common water providers in the state. 
 CWSgov$Residential <- ifelse(CWSgov$Final_inst_update == "Community Services District" |
                                CWSgov$Final_inst_update == "County Service Area" | 
                                CWSgov$Final_inst_update == "Municipal Water District" | 
@@ -270,7 +270,7 @@ Data$didnotapplycovid <- Data$Application.complete.
 Data$didnotapplycovid <- relevel(Data$didnotapplycovid, ref = "Yes")
 Data$didnotapplycovid  <- revalue(Data$didnotapplycovid , c("Yes" = "No", "No" = "Yes"))
 
-#add in data on recorded 2021 distribution outages from eAR via DWR 552
+#add in data on recorded 2023 distribution outages from eAR via DWR (SB 552)
 SB552 <- read.csv(here::here("Data_raw/DWR_WaterShortageVulnerability_Smallsystems_downloadApril72025.csv")) 
 SB552 <- SB552[,c(2,60)]
 

@@ -8,9 +8,7 @@ output:
 knit: (function(rmdfile, ...) { rmarkdown::render(rmdfile, output_dir=here::here("Docs"))})
 ---
 
-
 ```{r setup, include=FALSE, echo=FALSE}
-#MARKDOWN SETTINGS
 #knitr::opts_knit$set(root.dir = "/Users/KristinDobbin/Documents/Projects/R_Projects/Votingrights_systemperformance", warning=FALSE, message=FALSE, include=FALSE)
 
 #LOAD LIBRARIES
